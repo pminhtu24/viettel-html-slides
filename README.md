@@ -11,7 +11,7 @@ This skill contains a small Python generator, reusable HTML layout templates, Vi
 - Copies the `assets/` folder next to generated output.
 - Supports free-scrolling pages and locked `16x9` slide mode.
 - Adds image readability metadata for wide, ultra-wide, and tall local images.
-- Supports 11 reusable layouts.
+- Supports 13 reusable layouts.
 
 ## Structure
 
@@ -121,6 +121,8 @@ Supported layouts:
 - `grid`
 - `icon-text-grid`
 - `highlight`
+- `section-divider`
+- `agenda`
 
 ## Layout Examples
 

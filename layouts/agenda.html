@@ -1,0 +1,24 @@
+<div class="layout-agenda">
+  <div class="ag-left">
+    {{#if eyebrow}}
+    <div class="ag-eyebrow">{{eyebrow}}</div>
+    {{/if}}
+    <h1 class="ag-heading">{{title}}</h1>
+    {{#if subtitle}}
+    <p class="ag-meta">{{subtitle}}</p>
+    {{/if}}
+  </div>
+  <div class="ag-items">
+    {{#each items}}
+    <div class="ag-item {{#if active}}ag-item--active{{/if}}">
+      <div class="ag-num">{{number}}</div>
+      <div class="ag-item-body">
+        <div class="ag-item-title">{{title}}</div>
+        {{#if time}}
+        <div class="ag-item-time">{{time}}</div>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

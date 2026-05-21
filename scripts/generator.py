@@ -264,14 +264,25 @@ def generate_slide(data_path, master_template_path, output_path):
             data = json.load(f)
         enrich_image_metadata(data, data_path, output_path)
         body_classes = data.get("body_class", "")
-        if data.get("slide_mode") == "16x9":
+        normalized_mode = str(data.get("slide_mode", "")).strip().lower()
+        is_16x9 = normalized_mode in {"16x9", "16:9", "16-9"}
+        legacy_mode_class = "mode-16x9" in body_classes.split()
+        if is_16x9 or legacy_mode_class:
             body_classes = f"{body_classes} slide-16x9".strip()
-        data["body_class"] = body_classes
+        data["body_class"] = " ".join(dict.fromkeys(body_classes.split()))
 
         with open(master_template_path, 'r', encoding='utf-8') as f:
             master_html = f.read()
 
         layout_name = data.get("layout", "text-only")
+        show_header = data.get("show_header")
+        if show_header is None:
+            show_header = layout_name not in {"agenda"}
+        data["show_header"] = bool(show_header)
+        if not data["show_header"]:
+            body_classes = f"{body_classes} slide-no-header".strip()
+            data["body_class"] = " ".join(dict.fromkeys(body_classes.split()))
+
         base_dir = os.path.dirname(os.path.abspath(master_template_path))
         layout_path = os.path.join(base_dir, "layouts", f"{layout_name}.html")
 
@@ -296,6 +307,108 @@ def generate_slide(data_path, master_template_path, output_path):
             print(f"Warning: {data['readability_warning']}")
     except Exception as e:
         print(f"Error generating slide: {e}")
+
+# ---------------------------------------------------------------------------
+# section-divider
+# ---------------------------------------------------------------------------
+def render_section_divider(data: dict) -> str:
+    """
+    JSON fields:
+      title          (str, required)  – tên phần / chương
+      subtitle       (str, optional)  – mô tả phụ hoặc tên tiếng Anh
+      section_number (str, optional)  – số chương, ví dụ "01", "02"
+      tags           (list, optional) – danh sách thẻ tag nhỏ
+    """
+    section_number = data.get("section_number", "")
+    title = data.get("title", "")
+    subtitle = data.get("subtitle", "")
+    tags = data.get("tags", [])
+ 
+    number_html = ""
+    if section_number:
+        number_html = f'<div class="sd-big-number">{section_number}</div>'
+ 
+    subtitle_html = ""
+    if subtitle:
+        subtitle_html = f'<p class="sd-subtitle">{subtitle}</p>'
+ 
+    tags_html = ""
+    if tags:
+        tag_items = "".join(f'<span class="sd-tag">{t}</span>' for t in tags)
+        tags_html = f'<div class="sd-tag-row">{tag_items}</div>'
+ 
+    return f"""<div class="layout-section-divider">
+  <div class="sd-accent-bar"></div>
+  <div class="sd-content">
+    {number_html}
+    <div class="sd-title-block">
+      <h1 class="sd-title">{title}</h1>
+      {subtitle_html}
+    </div>
+    {tags_html}
+  </div>
+</div>"""
+ 
+ 
+# ---------------------------------------------------------------------------
+# agenda
+# ---------------------------------------------------------------------------
+def render_agenda(data: dict) -> str:
+    """
+    JSON fields:
+      title    (str, required)   – tiêu đề cột trái, ví dụ "Chương trình buổi họp"
+      subtitle (str, optional)   – ngày / tên sự kiện
+      eyebrow  (str, optional)   – nhãn nhỏ trên tiêu đề, ví dụ "Nội dung trình bày"
+      items    (list, required)  – danh sách mục agenda
+        Mỗi item:
+          number  (str)           – số thứ tự, ví dụ "1", "2"
+          title   (str)           – tên mục
+          time    (str, optional) – khung giờ, ví dụ "09:00 – 09:30"
+          active  (bool, optional)– true = đánh dấu mục đang diễn ra
+    """
+    eyebrow = data.get("eyebrow", "")
+    title = data.get("title", "")
+    subtitle = data.get("subtitle", "")
+    items = data.get("items", [])
+ 
+    eyebrow_html = ""
+    if eyebrow:
+        eyebrow_html = f'<div class="ag-eyebrow">{eyebrow}</div>'
+ 
+    subtitle_html = ""
+    if subtitle:
+        subtitle_html = f'<p class="ag-meta">{subtitle}</p>'
+ 
+    items_html_parts = []
+    for item in items:
+        num = item.get("number", "")
+        item_title = item.get("title", "")
+        time_str = item.get("time", "")
+        active = item.get("active", False)
+        active_class = " ag-item--active" if active else ""
+ 
+        time_html = f'<div class="ag-item-time">{time_str}</div>' if time_str else ""
+ 
+        items_html_parts.append(f"""    <div class="ag-item{active_class}">
+      <div class="ag-num">{num}</div>
+      <div class="ag-item-body">
+        <div class="ag-item-title">{item_title}</div>
+        {time_html}
+      </div>
+    </div>""")
+ 
+    items_html = "\n".join(items_html_parts)
+ 
+    return f"""<div class="layout-agenda">
+  <div class="ag-left">
+    {eyebrow_html}
+    <h1 class="ag-heading">{title}</h1>
+    {subtitle_html}
+  </div>
+  <div class="ag-items">
+{items_html}
+  </div>
+</div>"""
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:

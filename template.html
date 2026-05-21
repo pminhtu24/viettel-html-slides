@@ -10,10 +10,12 @@
 <body class="min-h-screen {{body_class}}">
     <div class="slide-shell tech-shell">
         <div class="slide-content">
+            {{#if show_header}}
             <header class="slide-header animate-fade-left">
                 <h1 class="slide-title">{{title}}</h1>
                 <p class="slide-subtitle">{{subtitle}}</p>
             </header>
+            {{/if}}
 
             <main class="slide-main">
                 {{layout_content}}

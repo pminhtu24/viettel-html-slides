@@ -1,0 +1,21 @@
+<div class="layout-section-divider">
+  <div class="sd-accent-bar"></div>
+  <div class="sd-content">
+    {{#if section_number}}
+    <div class="sd-big-number">{{section_number}}</div>
+    {{/if}}
+    <div class="sd-title-block">
+      <h1 class="sd-title">{{title}}</h1>
+      {{#if subtitle}}
+      <p class="sd-subtitle">{{subtitle}}</p>
+      {{/if}}
+    </div>
+    {{#if tags}}
+    <div class="sd-tag-row">
+      {{#each tags}}
+      <span class="sd-tag">{{this}}</span>
+      {{/each}}
+    </div>
+    {{/if}}
+  </div>
+</div>
