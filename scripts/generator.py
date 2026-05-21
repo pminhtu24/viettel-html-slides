@@ -157,6 +157,12 @@ def enrich_image_metadata(data, data_path, output_path):
 
 def process_template(template, data):
     # Handle nested {{#each}} and {{#if}} using a stack-based approach
+    def coerce_scalar(value):
+        if value is None:
+            return ""
+        if isinstance(value, (dict, list, tuple, set)):
+            return ""
+        return str(value)
     
     def get_closing_tag(text, start_tag, end_tag):
         depth = 0
@@ -235,17 +241,20 @@ def process_template(template, data):
     # Handle variables
     if isinstance(data, dict):
         for key, value in data.items():
-            str_val = str(value) if value is not None else ""
+            str_val = coerce_scalar(value)
             template = template.replace(f"{{{{{{ {key} }}}}}}", str_val)
             template = template.replace(f"{{{{{{{key}}}}}}}", str_val)
             template = template.replace(f"{{{{ {key} }}}}", str_val)
             template = template.replace(f"{{{{{key}}}}}", str_val)
     else:
-        str_val = str(data)
+        str_val = coerce_scalar(data)
         template = template.replace("{{this}}", str_val)
         template = template.replace("{{ this }}", str_val)
         template = template.replace("{{{this}}}", str_val)
         template = template.replace("{{{ this }}}", str_val)
+
+    # Remove any unresolved simple placeholders to avoid leaking template tokens
+    template = re.sub(r"{{{?\s*[\w_]+\s*}?}}", "", template)
 
     return template
 

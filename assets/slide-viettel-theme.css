@@ -5,8 +5,8 @@
     --vt-light: #ffffff;
     --vt-soft-bg: #ffffff;
     --vt-transition: 0.72s cubic-bezier(0.22, 1, 0.36, 1);
-    --slide-content-offset-x: -170px;
-    --slide-content-offset-y: -115px;
+    --slide-content-offset-x: 0px;
+    --slide-content-offset-y: 0px;
     --panel-radius: 1.5rem;
 }
 
@@ -77,7 +77,12 @@ body {
     z-index: 10;
     flex: 1;
     padding: 2rem;
-    transform: translate(var(--slide-content-offset-x), var(--slide-content-offset-y));
+    transform: none;
+}
+
+.slide-main {
+    width: min(calc(100vw - 7rem), 1480px);
+    margin: 0 auto;
 }
 
 .brand-logo {
@@ -124,11 +129,19 @@ body {
 }
 
 .slide-16x9 .slide-main {
-    --slide-header-width: min(calc(100vw - 17rem), 1500px);
-    width: min(calc(100vw - 7rem), 1660px);
-    max-width: none;
-    margin-left: calc((100% - var(--slide-header-width)) / 2);
-    margin-right: 0;
+    width: min(calc(100vw - 7rem), 1480px);
+    margin: 0 auto;
+    display: flex;
+    min-height: calc(100vh - 230px);
+}
+
+.slide-16x9 .slide-main > [class^="layout-"]:not(.layout-timeline) {
+    margin: auto;
+}
+
+.slide-main :is(h1, h2, h3, h4, h5, h6, p, li, td, th) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Cards & Panels */
@@ -341,12 +354,16 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    align-content: center;
 }
 .comp-side {
     padding: 2rem;
     border-radius: 1.5rem;
     background: white;
     border: 1px solid #f3f4f6;
+    min-width: 0;
 }
 .comp-side.highlight {
     border-color: var(--vt-red);
@@ -369,6 +386,8 @@ body {
 .layout-data-table {
     width: 100%;
     overflow-x: auto;
+    max-width: 1280px;
+    margin: 0 auto;
 }
 .vt-table {
     width: 100%;
@@ -397,6 +416,9 @@ body {
 .layout-grid {
     display: grid;
     gap: 1.5rem;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    align-content: center;
 }
 .layout-grid.grid-2x2 { grid-template-columns: repeat(2, 1fr); }
 .layout-grid.grid-3x3 { grid-template-columns: repeat(3, 1fr); }
@@ -406,6 +428,7 @@ body {
     border-radius: 1.25rem;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    min-width: 0;
 }
 .grid-item img {
     width: 100%;
@@ -424,6 +447,8 @@ body {
     text-align: center;
     height: 100%;
     gap: 2rem;
+    width: min(100%, 1200px);
+    margin: 0 auto;
 }
 .highlight-number {
     font-size: 8rem;
@@ -445,6 +470,9 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    align-content: center;
 }
 .icon-box {
     display: flex;
@@ -454,6 +482,7 @@ body {
     background: white;
     border-radius: 1.5rem;
     transition: transform 0.3s ease;
+    min-width: 0;
 }
 .icon-box:hover { transform: translateY(-5px); }
 .icon-wrapper {
@@ -474,11 +503,14 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
     align-items: center;
+    width: min(100%, 1280px);
+    margin: 0 auto;
 }
 .layout-image-text-split .text-side {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    min-width: 0;
 }
 .layout-image-text-split img {
     width: 100%;
@@ -493,6 +525,8 @@ body {
     gap: 2rem;
     align-items: center;
     text-align: center;
+    width: min(100%, 1200px);
+    margin: 0 auto;
 }
 .layout-image-top-text-bottom img {
     max-width: 90%;
@@ -501,6 +535,7 @@ body {
 }
 .layout-image-top-text-bottom .text-block {
     max-width: 800px;
+    padding: 1.5rem;
 }
 .layout-text-only {
     display: flex;
@@ -508,10 +543,12 @@ body {
     gap: 2rem;
     max-width: 1000px;
     margin: 0 auto;
+    min-width: 0;
 }
 .text-only-content {
     font-size: 1.25rem;
     line-height: 1.8;
+    padding: 1.5rem;
 }
 .text-only-content p { margin-bottom: 1.5rem; }
 .text-only-content ul { list-style: disc; padding-left: 2rem; margin-bottom: 1.5rem; }
@@ -562,6 +599,9 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: center;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    align-content: center;
 }
 .layout-two-horizontal-images img {
     width: 100%;
