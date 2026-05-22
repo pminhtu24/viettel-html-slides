@@ -1,6 +1,6 @@
 ---
 name: viettel-html-slide
-description: Generate HTML slides following the Viettel slide theme from JSON data. Supports 13 modular layouts.
+description: Generate HTML slides following the Viettel slide theme from JSON data. Supports 17 modular layouts.
 ---
 
 # Viettel HTML Slide Skill
@@ -10,7 +10,8 @@ This skill automates the generation of HTML slides based on the Viettel slide th
 ## Capabilities
 
 - Generate consistent HTML slides from JSON data.
-- Support for **13 modular layouts**:
+- Extract embedded images/diagrams from source documents (for example `.docx`, `.pptx`, `.pdf`) and map them into slide assets when visuals are relevant.
+- Support for **17 modular layouts**:
   - Two horizontal images
   - One large centered image
   - Image + Text (horizontal)
@@ -24,46 +25,110 @@ This skill automates the generation of HTML slides based on the Viettel slide th
   - Quote/Highlight Number
   - Section Divider
   - Agenda
+  - Chart + Analysis
+  - Bar + Insight
+  - Background Image Overlay
+  - Appendix / Technical
 
 ## Layout Decision Guide
 
-Use this guide to pick the right layout before writing any JSON. **Vary layouts across a deck** — using the same layout repeatedly makes slides feel repetitive and flat.
+Use this guide to choose layout before writing JSON.
+Primary rule: **message fit first, variety second**.
+A layout is correct when it makes the core message easier to understand in under 5 seconds.
 
-| Layout                  | When to use                                                       | When NOT to use                                      |
-| ----------------------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
-| `section-divider`       | Major deck sections / chapter transitions                         | As a content slide                                   |
-| `agenda`                | Opening slide listing topics or agenda items                      | Mid-deck content; needs ≥3 items to look good        |
-| `timeline`              | Sequential evolution, phased roadmap, chronological steps         | When order doesn't matter; items are equal-rank      |
-| `highlight`             | One big number / key stat to punch in                             | Multiple metrics; detailed content                   |
-| `comparison`            | Problem vs solution, before vs after, two approaches side-by-side | More than 2 sides; list-only content                 |
-| `data-table`            | Structured numeric/text data, benchmarks, structured lists        | Narrative prose; single idea                         |
-| `text-only`             | Structured prose, concept explanation, detailed bullets           | When a table or timeline fits better                 |
-| `icon-text-grid`        | 3–4 parallel concepts with visual icons (overview cards)          | When order/sequence matters; when data is structured |
-| `grid`                  | 2×2 or 3×3 image+text cards                                       | No images available; ordered/side-by-side content    |
-| `centered-image`        | Single diagram, screenshot, architecture visual                   | Multiple images; no image provided                   |
-| `two-horizontal-images` | Two diagrams side-by-side, before/after visuals                   | Single image; more than 2 images                     |
-| `image-text-split`      | One image with a paragraph alongside                              | Multiple concepts; no image                          |
-| `image-top-text-bottom` | Image as hero with explanation below                              | Tight data; multiple independent concepts            |
+| Layout                  | Use when                                            | Usually avoid when                              |
+| ----------------------- | --------------------------------------------------- | ----------------------------------------------- |
+| `section-divider`       | Starting a new section/chapter                      | Main content needs depth                        |
+| `agenda`                | Opening slide with 3+ agenda items                  | Mid-deck detail slides                          |
+| `timeline`              | Sequence, phases, milestones, causality over time   | Order does not matter                           |
+| `highlight`             | One key KPI/stat to emphasize                       | Comparing many metrics                          |
+| `comparison`            | Two clear alternatives (before/after, A vs B)       | More than 2 dimensions                          |
+| `data-table`            | Structured values/benchmarks matrix                 | Narrative or single-point message               |
+| `text-only`             | Concept explanation, policy, dense structured prose | Visual evidence is available and more effective |
+| `icon-text-grid`        | 3-4 parallel concepts at equal rank                 | Time sequence or metric-heavy data              |
+| `chart-analysis`        | KPI summary + chart breakdown on one slide          | Narrative-only content without numeric evidence |
+| `bar-insight`           | Quarterly KPI bars + executive quick-read panel     | High-cardinality data needing full table detail |
+| `background-overlay`    | Need high-impact visual atmosphere behind insights  | Dense tables or long text-heavy explanations    |
+| `appendix-technical`    | Technical appendix, IOC flow, deep-dive checklist   | High-level intro or executive summary           |
+| `grid`                  | 2x2 or 3x3 visual cards, portfolio snapshots        | No useful images; strict sequence needed        |
+| `centered-image`        | One diagram/screenshot is the main message          | Multiple visuals are equally important          |
+| `two-horizontal-images` | Direct side-by-side visual comparison               | One image only, or 3+ images                    |
+| `image-text-split`      | One visual + one explanatory narrative              | Multiple independent concepts                   |
+| `image-top-text-bottom` | Hero visual then interpretation/context             | Dense data requiring scan efficiency            |
 
-**Deck layout variety rule:** In a deck of N slides, aim to use at least 5–6 different layout types. If you find yourself reaching for `icon-text-grid` more than twice, stop and ask: could `timeline`, `comparison`, or `data-table` communicate this content better?
+**Layout variety policy:**
 
-**⚠️ Strict no-consecutive-repetition rule:** Two slides back-to-back must never share the same layout type. This applies to _all_ layouts — not just `icon-text-grid`. For example, two `timeline` slides in a row is just as flat as two `icon-text-grid` in a row. Before finalizing a deck, run through the layout sequence and confirm no two adjacent slides repeat the same layout. If the content naturally flows as a timeline, break it up with a `comparison` or `data-table` or `text-only` slide between consecutive timeline blocks.
+- 6-12 slides: aim for 4-6 layout types.
+- 13+ slides: aim for 6+ layout types.
+- Do not overuse `icon-text-grid` (normally max 2 per 10 slides).
+- Repetition is allowed if it improves comprehension.
 
-**Layout sequence checklist (do this before generating any slide):**
+**Repetition rule (soft, with exceptions):**
 
-1. Draft the full slide list with layout types before writing any JSON.
-2. Scan for consecutive duplicates — if found, swap one to a different layout type.
-3. Aim for at least 5–6 distinct layout types across a 10-slide deck.
-4. Reserve `icon-text-grid` for the final summary/conclusion slide or when no other layout fits better.
+- Default: avoid consecutive identical layouts.
+- Exception is allowed when continuity/readability is stronger (for example, phased timeline).
+- If repeating a layout, change rhythm by at least one: content density, visual emphasis (image-led vs text-led), or interaction pattern (compare vs explain).
+
+**Layout selection heuristic (quick order):**
+
+1. If the slide is mainly time/sequence, use `timeline`.
+2. If the slide is mainly two-way contrast, use `comparison` or `two-horizontal-images`.
+3. If the slide is mainly structured values, use `data-table`,`bar-insight` or `chart-analysis`.
+4. If the slide is mainly a single proof visual, use `centered-image` or `image-top-text-bottom`.
+5. If the slide needs high-impact narrative over imagery, use `background-overlay`.
+6. If the slide is mainly concept explanation, use `text-only`, `image-text-split`, or `icon-text-grid`.
+7. If the slide is technical detail, use `appendix-technical`.
+
+**Pre-generation checklist:**
+
+1. Draft the full slide outline with message + layout for each slide.
+2. Check semantic fit first (`why this layout for this message`).
+3. Check sequence rhythm; avoid unnecessary consecutive duplicates.
+4. Verify variety target is met for deck length.
+5. Final pass: do not choose a layout only for variety if it hurts clarity.
+
+## Avoid (Common Mistakes)
+
+- Do not repeat the same layout for more than two consecutive slides unless sequence continuity requires it.
+- Do not use `text-only` when a source visual provides stronger evidence.
+- Do not ship low-contrast text or icons against the background.
+- Do not allow text overflow or clipping in `"slide_mode": "16x9"`.
+- Do not leave placeholder content in final output (for example `lorem`, `xxxx`, `TBD`).
+- Do not overload a single `data-table`; if scan speed drops, split the content into multiple slides.
+
+## Layout Options by Message Type
+
+- Sequence or process flow: use `timeline`; fallback to `agenda` for meeting/program format.
+- Two-way contrast: use `comparison` or `two-horizontal-images`.
+- KPI summary plus segmented breakdown: use `chart-analysis` or `bar-insight`; fallback to `data-table`.
+- Single proof visual: use `centered-image` or `image-top-text-bottom`.
+- Parallel concepts at equal rank: use `icon-text-grid` or `grid`.
+
+## Data Display Rules
+
+- Keep one primary numeric message per slide.
+- For 16:9 slides, keep tables compact (typically up to 6 rows x 5 columns per table).
+- For chart slides, always provide labels, units, and time context.
+- For comparisons, keep units, scales, and numeric formatting consistent across both sides.
+- Prefer large key-number callouts first, then supporting detail.
+
+## Visual Polish
+
+- Keep a consistent typography scale across the deck (title, section header, body, caption).
+- Keep spacing rhythm consistent between content blocks (for example 24px or 32px systems).
+- Left-align body paragraphs and lists; reserve centered alignment for titles or short labels.
+- Use one recurring visual motif across the deck (for example icon circles, card treatment, or border style).
+- Keep icon style consistent per slide and use only `./assets/viettel-icon-v1/icons/` for bundled icons.
 
 ## Agent Workflow From User Prompt
 
 1. Read the user's natural-language slide request.
-2. Select the most suitable built-in layout using the guide above. **Deliberately vary layouts** across slides.
-3. Convert the request into JSON data for that layout.
-4. Save the JSON input file near the intended output.
-5. Run `python3 scripts/generator.py <input.json> template.html <output.html>` from this skill directory.
-6. Return the generated HTML path and a short summary of the chosen layout.
+2. If the user provides a source file, extract and collect reusable visuals (charts, diagrams, screenshots) into the output `assets/` folder first.
+3. Select the most suitable built-in layout using the guide above. **Deliberately vary layouts** across slides.
+4. Convert the request into JSON data for that layout, wiring extracted assets via `image_src` / `image_1_src` / `image_2_src` / grid item image fields.
+5. Save the JSON input file near the intended output.
+6. Run `python3 scripts/generator.py <input.json> template.html <output.html>` from this skill directory.
+7. Return the generated HTML path and a short summary of the chosen layout.
 
 For a deck, create one JSON file and one HTML output per slide, then merge into a single scrollable deck (see Deck Building below).
 
@@ -97,6 +162,14 @@ Example user prompts:
 - Images with aspect ratio `<= 0.75` are treated as tall readable charts and should occupy one slide or be split vertically.
 - Multi-image layouts that contain wide/tall readable charts must be split by the caller/deck builder into one image per slide; the generator emits a warning instead of silently shrinking charts until labels are unreadable.
 - Single-image layouts add readability classes automatically so CSS can scale charts larger in 16:9 mode.
+
+## Source Image Extraction Rules
+
+- When the source content includes embedded visuals, prefer reusing those original visuals instead of redrawing them manually.
+- Extract source visuals into the deck-local `assets/` directory and reference them with relative paths (for example `./assets/semantic-router-pipeline.png`).
+- Keep extracted filenames descriptive and stable so JSON/HTML mapping is easy to audit.
+- If multiple visuals exist, map each visual to the slide whose message depends on that evidence (diagram-proof alignment first, decoration second).
+- If a source visual is unreadable at slide scale, split into multiple slides or use a single-image layout with `slide_mode: "16x9"` before considering omission.
 
 ## Data Structure
 
@@ -256,8 +329,90 @@ Slide numbering must be shown only through the deck navigation status, for examp
   - white foreground glyph
   - `viewBox="0 0 64 64"` for consistent scaling
 
-When generating `icon-text-grid`, always source icons from `./assets/viettel-icon-v1/icons/` first, then inline the selected file content into each `icon_svg` field.
+When generating any layout that uses icons, always source icons from `./assets/viettel-icon-v1/icons/`.
+Always verify the selected file exists before writing JSON/HTML.
 Do not hand-draw new inline SVGs unless the requested icon does not exist in the library.
+
+## Icon Usage Rules (Short)
+
+- Prefer icon-enabled layouts when content has categorized concepts, drivers, steps, or tracks.
+- Do not force icons into: `data-table`, `centered-image`, `two-horizontal-images`.
+- Use only `./assets/viettel-icon-v1/icons/` for bundled icon assets.
+- Keep icon density balanced: typically `3–8` icons per slide.
+- Keep one consistent icon style per slide; avoid mixing styles.
+
+## Icon Coverage Rules
+
+- Deck-level coverage target:
+  - `6-9` slides: at least `2` icon-enabled slides.
+  - `10-15` slides: at least `3-5` icon-enabled slides.
+  - `16+` slides: at least `25%-40%` icon-enabled slides.
+- Prioritize icon-enabled layouts first when semantic fit is similar:
+  - `icon-text-grid` for parallel concepts
+  - `chart-analysis` for labeled categories/KPIs
+  - `appendix-technical` for process/flow/risk steps
+- For `icon-text-grid`, each item should include one icon (no empty icon slots).
+- For `chart-analysis`, each bar should include `icon_src` when category labels are shown.
+- For `appendix-technical`, each `attack_steps` item should include `icon_src` or `icon_svg`.
+
+## Icon Fallback Mechanism
+
+Use this fallback chain when an exact icon is not available.
+
+1. Try exact semantic match from `./assets/viettel-icon-v1/icons/` (filename keyword match).
+2. If no exact match, use domain fallback mapping:
+   - growth/performance -> `chart-line.svg`
+   - strategy/plan -> `strategy.svg`
+   - security/risk -> `shield.svg`
+   - cloud/platform -> `cloud.svg`
+   - data/analytics -> `database.svg`
+   - network/infrastructure -> `network.svg`
+   - team/people -> `team.svg`
+   - operations/process -> `settings.svg`
+   - logistics/transport -> `truck-delivery.svg`
+3. If mapped icon is missing, use the neutral default: `info.svg`.
+4. Always verify every icon path exists before writing final JSON/HTML.
+5. Never leave icon fields blank in icon-required blocks:
+   - For `icon-text-grid`, fill `icon_svg` with an `<img>` tag pointing to a valid fallback icon path.
+   - For `chart-analysis` and `appendix-technical`, fill `icon_src` with a valid fallback icon path.
+
+### Icon Download from Trusted Sources
+
+If an icon is not available in `./assets/viettel-icon-v1/icons/` and the fallback mapping above does not provide a suitable match, download from these trusted sources:
+
+**Recommended Icon Libraries:**
+
+- **Feather Icons** (https://feathericons.com) – minimal, clean, monochrome SVGs with 24x24 viewBox
+- **Heroicons** (https://heroicons.com) – well-designed, multiple styles (outline, solid), 24x24 viewBox
+- **FontAwesome** (https://fontawesome.com) – comprehensive, use solid SVGs only
+- **Bootstrap Icons** (https://icons.getbootstrap.com) – clean, consistent, monochrome, 16x16 viewBox
+- **Material Design Icons** (https://fonts.google.com/icons) – Google's official icons, various viewBox sizes
+
+**Processing Downloaded Icons:**
+
+1. Download the SVG file in monochrome or single-color format.
+2. Open the SVG in a text editor and adjust the `viewBox` to `"0 0 64 64"` for consistency with existing icons.
+3. If the icon uses a solid background (e.g., circle), wrap it in a `<g>` group within the SVG.
+4. Place the processed SVG in `./assets/viettel-icon-v1/icons/` with a descriptive filename (e.g., `custom-security.svg`).
+5. Update the relevant JSON or HTML to reference the new icon path.
+6. Test the icon rendering before finalizing the slide output.
+
+**Quality Checklist for Downloaded Icons:**
+
+- SVG is monochrome (single color) or follows Viettel brand colors.
+- `viewBox` is set correctly for consistent scaling.
+- Icon is small enough to fit inside a 64x64 square without overflow.
+- File size is under 5 KB (optimize using tools like https://svgomg.web.app if needed).
+
+### Runtime Fallback (Deck Preview)
+
+- In addition to data-time fallback, apply runtime fallback in deck preview pages.
+- Add icon fallback binding in `preview/<deck-name>/index.html` after each iframe slide load:
+  - listen to `frame.addEventListener("load", ...)`
+  - find icon images under `img[src*="viettel-icon-v1/icons/"]`
+  - attach `error` handler and swap to mapped similar icon.
+- Keep fallback map semantic and deterministic (same broken icon -> same replacement icon).
+- Use neutral safe default (`security.svg` or `info.svg`) when no mapped replacement exists.
 
 ### 11. highlight
 
@@ -338,6 +493,150 @@ Fields:
   - `time` (str, optional) — time slot, for example `"09:00 – 09:10"`
   - `active` (bool, optional) — set `true` to highlight the current item; only one item should be active
 
+---
+
+### 14. chart-analysis
+
+Used when one slide needs both quick KPI context and a chart breakdown by segment.
+
+```json
+{
+  "layout": "chart-analysis",
+  "title": "Regional Review",
+  "subtitle": "North America performance snapshot",
+  "metrics": [
+    { "label": "Underlying Revenue", "value": "$15,694M", "value_class": "v1" },
+    {
+      "label": "Organic Revenue Growth",
+      "value": "+7.7%",
+      "value_class": "v2"
+    },
+    {
+      "label": "Underlying Operating Profit",
+      "value": "$1,290M",
+      "value_class": "v3"
+    },
+    {
+      "label": "Underlying Operating Margin",
+      "value": "8.2%",
+      "value_class": "v4"
+    }
+  ],
+  "chart_title": "Regional Mix by Vertical",
+  "chart_note": "Snapshot Q2/2026",
+  "bars": [
+    {
+      "value": "32%",
+      "pct": "86",
+      "color": "#ff5a1f",
+      "icon_src": "./assets/viettel-icon-v1/icons/briefcase.svg",
+      "icon_alt": "Business icon",
+      "label": "Business & Industry"
+    }
+  ],
+  "slide_mode": "16x9"
+}
+```
+
+Fields:
+
+- `metrics` (list, required) — each item: `label`, `value`, optional `value_class` (for color tuning)
+- `chart_title` (str, optional) — title above bars
+- `chart_note` (str, optional) — sub-note above bars
+- `bars` (list, required) — each bar: `value`, `pct` (`0-100`), `color`, `label`, and optional `icon_src`/`icon_svg`
+
+---
+
+### 15. background-overlay
+
+Used for narrative insight slides with a background image plus a readability overlay.
+
+```json
+{
+  "layout": "background-overlay",
+  "title": "Tổng quan",
+  "subtitle": "Xu hướng và cảnh báo",
+  "background_image_src": "./assets/city-night.jpg",
+  "background_image_alt": "Urban background",
+  "overlay_title": "Tổng quan xu hướng và cảnh báo vận hành",
+  "overlay_copy": "Mẫu phù hợp cho insight cấp chiến lược bám theo bối cảnh thị trường.",
+  "focus_label": "FOCUS: Từ dữ liệu nền sang hành động ưu tiên",
+  "insights": [
+    {
+      "title": "Gia tăng lừa đảo có mục tiêu",
+      "copy": "Threat intelligence ghi nhận nhiều lỗ hổng theo ngành."
+    },
+    {
+      "title": "Khuyến nghị triển khai",
+      "copy": "Thiết lập playbook phản ứng nhanh và phân tầng IOC."
+    }
+  ],
+  "slide_mode": "16x9"
+}
+```
+
+Fields:
+
+- `background_image_src` (str, required) — full background image path
+- `overlay_title` (str, required) — main narrative heading on top of image
+- `overlay_copy` (str, required) — short narrative text
+- `focus_label` (str, optional) — highlighted focus line
+- `insights` (list, required) — right-side insight cards (`title`, `copy`)
+
+---
+
+### 16. appendix-technical
+
+Used for technical appendix pages with operation notes, attack flow, and quick detection signals.
+
+```json
+{
+  "layout": "appendix-technical",
+  "title": "Appendix",
+  "subtitle": "Technical details",
+  "appendix_eyebrow": "Phụ lục kỹ thuật APT TA-SC-33",
+  "overview_title": "1. Tổng quan chiến dịch",
+  "overview_copy": "TA-SC-33 sử dụng spear-phishing kết hợp C2 động để thu thập dữ liệu.",
+  "overview_bullets": [
+    "Phạm vi ảnh hưởng: VN, Lào, Thái Lan",
+    "Tần suất IOC mới: 2-3 batch/ngày"
+  ],
+  "recommendations_title": "2. Khuyến nghị xử lý",
+  "recommendation_bullets": [
+    "Giám sát DNS bất thường",
+    "Sandbox tệp macro trước khi mở"
+  ],
+  "tags": ["SOC", "Threat Intel", "CSIRT"],
+  "attack_flow_title": "Chuỗi tấn công chính",
+  "attack_steps": [
+    {
+      "icon_src": "./assets/viettel-icon-v1/icons/mail.svg",
+      "icon_alt": "Mail icon",
+      "title": "Spear Phishing"
+    },
+    {
+      "icon_src": "./assets/viettel-icon-v1/icons/network.svg",
+      "icon_alt": "Network icon",
+      "title": "C2 Server"
+    }
+  ],
+  "signals_title": "3. Dấu hiệu nhận biết nhanh",
+  "quick_signals": [
+    "Domain mới < 72h nhưng traffic tăng đột biến",
+    "PowerShell chạy nền từ tệp Office macro"
+  ],
+  "slide_mode": "16x9"
+}
+```
+
+Fields:
+
+- `appendix_eyebrow` (str, optional) — top technical label
+- `overview_title`, `overview_copy`, `overview_bullets` — left block, campaign summary
+- `recommendations_title`, `recommendation_bullets`, `tags` — left block, recommendations
+- `attack_flow_title`, `attack_steps` — right block, attack chain
+- `signals_title`, `quick_signals` — right block, quick detection cues
+
 ## Workflow
 
 1. Read the `template.html` and the corresponding file in `layouts/`.
@@ -345,7 +644,8 @@ Fields:
 3. Handle loops (`#each`) for tables, timelines, and grids.
 4. Inject the layout HTML into the master template's `{{layout_content}}`.
 5. Copy the bundled `assets/` directory into the output HTML folder.
-6. Write the final HTML to a new file.
+6. If building a multi-slide preview deck (`preview/<deck-name>/index.html`), wire runtime icon fallback in iframe load handler.
+7. Write the final HTML to a new file.
 
 ## Templates
 

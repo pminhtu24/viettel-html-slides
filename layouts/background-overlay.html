@@ -1,0 +1,23 @@
+<section class="layout-background-overlay animate-scale-in">
+  <img src="{{background_image_src}}" class="bo-bg" alt="{{background_image_alt}}">
+  <div class="bo-layer"></div>
+
+  <div class="bo-grid">
+    <div class="bo-left">
+      <h3>{{overlay_title}}</h3>
+      <p>{{overlay_copy}}</p>
+      {{#if focus_label}}
+      <div class="bo-focus">{{focus_label}}</div>
+      {{/if}}
+    </div>
+
+    <div class="bo-list">
+      {{#each insights}}
+      <article class="bo-item">
+        <p class="bo-item-title">{{title}}</p>
+        <p class="bo-item-copy">{{copy}}</p>
+      </article>
+      {{/each}}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,51 @@
+<section class="layout-bar-insight animate-fade-up">
+  <div class="bi-top-cards">
+    {{#each summary_cards}}
+    <article class="bi-card {{tone}}">
+      <p class="bi-card-label">{{label}}</p>
+      <p class="bi-card-value">{{value}}</p>
+    </article>
+    {{/each}}
+  </div>
+
+  <div class="bi-main">
+    <section class="bi-chart-panel">
+      {{#if chart_title}}
+      <h3 class="bi-chart-title">{{chart_title}}</h3>
+      {{/if}}
+      {{#if chart_note}}
+      <p class="bi-chart-note">{{chart_note}}</p>
+      {{/if}}
+
+      <div class="bi-bars">
+        {{#each bars}}
+        <div class="bi-bar-row">
+          <p class="bi-row-label">{{label}}</p>
+          <div class="bi-row-data">
+            <div class="bi-row-track">
+              <div class="bi-row-fill" style="--pct: {{pct}}%; --bar-color: {{color}};"></div>
+            </div>
+            <p class="bi-row-value">{{value}}</p>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+
+    <aside class="bi-insight-panel">
+      {{#if insight_title}}
+      <h4 class="bi-insight-title">{{insight_title}}</h4>
+      {{/if}}
+
+      <ul class="bi-insight-list">
+        {{#each insight_items}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+
+      {{#if source}}
+      <div class="bi-source">{{source}}</div>
+      {{/if}}
+    </aside>
+  </div>
+</section>

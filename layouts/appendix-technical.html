@@ -1,0 +1,67 @@
+<section class="layout-appendix-technical animate-fade-up">
+  <p class="at-eyebrow">{{appendix_eyebrow}}</p>
+
+  <div class="at-grid">
+    <div>
+      <div class="at-block">
+        <h3 class="at-heading">{{overview_title}}</h3>
+        <p class="at-copy">{{overview_copy}}</p>
+        {{#if overview_bullets}}
+        <ul class="at-list">
+          {{#each overview_bullets}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+
+      <div class="at-block at-block-spaced">
+        <h3 class="at-heading">{{recommendations_title}}</h3>
+        {{#if recommendation_bullets}}
+        <ul class="at-list">
+          {{#each recommendation_bullets}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
+        {{#if tags}}
+        <div class="at-tag-row">
+          {{#each tags}}
+          <span class="at-tag">{{this}}</span>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="at-block">
+      <p class="at-flow-title">{{attack_flow_title}}</p>
+      <div class="at-flow">
+        {{#each attack_steps}}
+        <div class="at-step">
+          <div class="at-step-icon">
+            {{#if icon_src}}
+            <img src="{{icon_src}}" alt="{{icon_alt}}">
+            {{/if}}
+            {{#if icon_svg}}
+            {{{icon_svg}}}
+            {{/if}}
+          </div>
+          <p class="at-step-title">{{title}}</p>
+        </div>
+        {{/each}}
+      </div>
+
+      <div class="at-block at-block-inner">
+        <h3 class="at-heading">{{signals_title}}</h3>
+        {{#if quick_signals}}
+        <ul class="at-list">
+          {{#each quick_signals}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,39 @@
+<div class="layout-chart-analysis animate-fade-up">
+  <aside class="ca-metrics">
+    {{#each metrics}}
+    <div class="ca-metric-row">
+      <p class="ca-label">{{label}}</p>
+      <p class="ca-value {{value_class}}">{{value}}</p>
+    </div>
+    {{/each}}
+  </aside>
+
+  <section class="ca-chart-panel">
+    {{#if chart_title}}
+    <h3 class="ca-chart-title">{{chart_title}}</h3>
+    {{/if}}
+    {{#if chart_note}}
+    <p class="ca-chart-note">{{chart_note}}</p>
+    {{/if}}
+
+    <div class="ca-bars">
+      {{#each bars}}
+      <div class="ca-bar-col">
+        <p class="ca-bar-value">{{value}}</p>
+        <div class="ca-bar-track">
+          <div class="ca-bar" style="--pct: {{pct}}%; --bar-color: {{color}};"></div>
+        </div>
+        <div class="ca-cat">
+          {{#if icon_src}}
+          <span class="ca-icon"><img src="{{icon_src}}" alt="{{icon_alt}}"></span>
+          {{/if}}
+          {{#if icon_svg}}
+          <span class="ca-icon">{{{icon_svg}}}</span>
+          {{/if}}
+          <span class="ca-cat-label">{{label}}</span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+</div>

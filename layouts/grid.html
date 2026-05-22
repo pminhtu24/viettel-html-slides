@@ -5,6 +5,12 @@
         <img src="{{image_src}}" alt="{{title}}" class="{{image_readability_class}}">
         {{/if}}
         <div class="grid-item-content">
+            {{#if icon_src}}
+            <span class="grid-icon"><img src="{{icon_src}}" alt="{{icon_alt}}"></span>
+            {{/if}}
+            {{#if icon_svg}}
+            <span class="grid-icon">{{{icon_svg}}}</span>
+            {{/if}}
             <h4 class="feature-title" style="margin-top:0">{{title}}</h4>
             <p class="feature-copy">{{copy}}</p>
         </div>

@@ -26,6 +26,82 @@
     </div>
 
 <script>
+  function applyIconGridDensity() {
+    const grids = document.querySelectorAll(".layout-icon-text-grid");
+    grids.forEach((grid) => {
+      const count = grid.querySelectorAll(".icon-box").length;
+      grid.classList.remove("icon-grid-3", "icon-grid-4", "icon-grid-5");
+      if (count === 3) grid.classList.add("icon-grid-3");
+      if (count === 4) grid.classList.add("icon-grid-4");
+      if (count === 5) grid.classList.add("icon-grid-5");
+    });
+  }
+
+  function fitLayoutHeight() {
+    const body = document.body;
+    const is16x9 = body.classList.contains("slide-16x9") || body.classList.contains("mode-16x9");
+    if (!is16x9) return;
+
+    const main = document.querySelector(".slide-main");
+    if (!main) return;
+
+    const targets = [
+      { selector: ".layout-text-only", minScale: 0.72 },
+      { selector: ".layout-timeline", minScale: 0.76 },
+      { selector: ".layout-chart-analysis", minScale: 0.64 },
+      { selector: ".layout-icon-text-grid", minScale: 0.66 },
+      { selector: ".layout-appendix-technical", minScale: 0.62 },
+      { selector: ".layout-grid", minScale: 0.68 },
+      { selector: ".layout-background-overlay", minScale: 0.7 },
+      { selector: ".layout-bar-insight", minScale: 0.68 }
+    ];
+
+    targets.forEach(({ selector, minScale }) => {
+      const layout = main.querySelector(selector);
+      if (!layout) return;
+      const textPanel = selector === ".layout-text-only" ? layout.querySelector(".text-only-content") : null;
+
+      layout.style.removeProperty("--layout-fit-scale");
+      layout.style.removeProperty("overflow");
+      layout.style.removeProperty("max-height");
+      layout.style.removeProperty("padding-right");
+      if (textPanel) {
+        textPanel.style.removeProperty("max-height");
+        textPanel.style.removeProperty("overflow");
+      }
+
+      const available = main.clientHeight;
+      if (!available) return;
+
+      let scale = 1;
+      let guard = 0;
+      while (layout.scrollHeight > available && scale > minScale && guard < 24) {
+        scale -= 0.03;
+        layout.style.setProperty("--layout-fit-scale", scale.toFixed(2));
+        guard += 1;
+      }
+
+      if (layout.scrollHeight > available) {
+        layout.style.overflow = "auto";
+        layout.style.maxHeight = `${available}px`;
+        layout.style.paddingRight = "0.5rem";
+
+        if (textPanel) {
+          const chromeHeight = layout.scrollHeight - textPanel.scrollHeight;
+          const panelHeight = Math.max(140, available - chromeHeight - 8);
+          textPanel.style.maxHeight = `${panelHeight}px`;
+          textPanel.style.overflow = "auto";
+        }
+      }
+    });
+  }
+
+  function runLayoutFit() {
+    applyIconGridDensity();
+    fitLayoutHeight();
+    requestAnimationFrame(fitLayoutHeight);
+  }
+
   window.addEventListener("keydown", (event) => {
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       window.parent.postMessage({
@@ -34,6 +110,12 @@
       }, "*");
     }
   });
+
+  window.addEventListener("load", runLayoutFit);
+  window.addEventListener("resize", runLayoutFit);
+  if (document.fonts && typeof document.fonts.ready?.then === "function") {
+    document.fonts.ready.then(runLayoutFit).catch(() => {});
+  }
 </script>
 
 </body>
