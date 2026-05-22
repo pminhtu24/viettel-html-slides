@@ -245,6 +245,20 @@ Slide numbering must be shown only through the deck navigation status, for examp
 }
 ```
 
+## Icon Asset Library
+
+- Main icon library path: `./assets/viettel-icon-v2/icons/`
+- Library browser page: `./assets/viettel-icon-v2/viettel-icon-libarary.html`
+- Library docs: `./assets/viettel-icon-v2/README.md`
+- Legacy Codex icon pack: `./assets/viettel-icon-v2/codex-icons-v1/`
+- Each icon is a standalone SVG with:
+  - circular red/dark background
+  - white foreground glyph
+  - `viewBox="0 0 64 64"` for consistent scaling
+
+When generating `icon-text-grid`, always source icons from `./assets/viettel-icon-v2/icons/` first, then inline the selected file content into each `icon_svg` field.
+Do not hand-draw new inline SVGs unless the requested icon does not exist in the library.
+
 ### 11. highlight
 
 ```json
