@@ -1,0 +1,21 @@
+<div class="layout-timelinev2 animate-fade-up">
+  <div class="tlv2-axis"></div>
+  <div class="tlv2-row">
+    {{#each events}}
+    <article class="tlv2-node" style="--tlv2-accent: {{accent}}; --tlv2-badge: {{badge}};">
+      <div class="tlv2-dot"></div>
+      <div class="tlv2-stem"></div>
+      <div class="tlv2-card">
+        <div class="tlv2-badge-wrap">
+          <span class="tlv2-icon">{{icon}}</span>
+        </div>
+        <div class="tlv2-text">
+          <p class="tlv2-year">{{date}}</p>
+          <h4 class="tlv2-title">{{title}}</h4>
+          <p class="tlv2-copy">{{copy}}</p>
+        </div>
+      </div>
+    </article>
+    {{/each}}
+  </div>
+</div>

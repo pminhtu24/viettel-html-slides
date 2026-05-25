@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./assets/slide-viettel-theme.css">
+    <title>{{title}}</title><link rel="stylesheet" href="./assets/slide-viettel-theme.css">
 </head>
 <body class="min-h-screen {{body_class}}">
     <div class="slide-shell tech-shell">
@@ -26,6 +24,85 @@
     </div>
 
 <script>
+  const iconFallbackByName = {
+    "cloud-upload.svg": "cloud.svg",
+    "copy-file.svg": "data-pipeline.svg",
+    "search.svg": "analytics.svg",
+    "calendar.svg": "uptime.svg",
+    "warning.svg": "security.svg",
+    "globe.svg": "platform.svg",
+    "key.svg": "security.svg",
+    "shield.svg": "security.svg",
+    "building.svg": "platform.svg",
+    "service.svg": "support.svg",
+    "cart.svg": "cost.svg",
+    "power.svg": "uptime.svg",
+    "grid-menu.svg": "integration.svg",
+    "check.svg": "compliance.svg",
+    "top-priority.svg": "strategy.svg",
+    "info.svg": "analytics.svg",
+    "arrow-up-right.svg": "performance.svg",
+    "upload-alt.svg": "data-pipeline.svg",
+    "no-access.svg": "security.svg"
+  };
+
+  function getIconFallbackName(src = "") {
+    const iconName = (src.split("/").pop() || "").split("?")[0];
+    return iconFallbackByName[iconName] || "security.svg";
+  }
+
+  function pickEmojiForIcon(src = "", alt = "") {
+    const text = `${src} ${alt}`.toLowerCase();
+    if (text.includes("shield") || text.includes("security") || text.includes("lock")) return "🛡️";
+    if (text.includes("cloud")) return "☁️";
+    if (text.includes("chart") || text.includes("analytics")) return "📊";
+    if (text.includes("database") || text.includes("data")) return "🗄️";
+    if (text.includes("network") || text.includes("globe") || text.includes("wifi")) return "🌐";
+    if (text.includes("team") || text.includes("users") || text.includes("people")) return "👥";
+    if (text.includes("settings") || text.includes("automation")) return "⚙️";
+    if (text.includes("warning") || text.includes("alert")) return "⚠️";
+    if (text.includes("support") || text.includes("service")) return "🛠️";
+    if (text.includes("versus")) return "⚔️";
+    return "🔴";
+  }
+
+  function replaceBrokenIconWithEmoji(img) {
+    if (!img || img.dataset.emojiFallbackApplied === "1") return;
+    const emoji = pickEmojiForIcon(img.getAttribute("src") || "", img.getAttribute("alt") || "");
+    const span = document.createElement("span");
+    span.className = "icon-emoji-fallback";
+    span.setAttribute("role", "img");
+    span.setAttribute("aria-label", (img.getAttribute("alt") || "icon") + " fallback");
+    span.textContent = emoji;
+    img.dataset.emojiFallbackApplied = "1";
+    img.replaceWith(span);
+  }
+
+  function applyIconEmojiFallback() {
+    const iconImages = document.querySelectorAll(
+      ".icon-wrapper img, .kg-icon img, .grid-icon img, .ca-icon img, .at-step-icon img, .comp-vs-icon img"
+    );
+
+    iconImages.forEach((img) => {
+      img.addEventListener("error", () => {
+        if (img.dataset.iconFallbackApplied !== "1") {
+          img.dataset.iconFallbackApplied = "1";
+          img.src = `./assets/viettel-icon-v1/icons/${getIconFallbackName(img.currentSrc || img.src || "")}`;
+          return;
+        }
+        replaceBrokenIconWithEmoji(img);
+      });
+      if (img.complete && img.naturalWidth === 0) {
+        if (img.dataset.iconFallbackApplied !== "1") {
+          img.dataset.iconFallbackApplied = "1";
+          img.src = `./assets/viettel-icon-v1/icons/${getIconFallbackName(img.currentSrc || img.src || "")}`;
+        } else {
+          replaceBrokenIconWithEmoji(img);
+        }
+      }
+    });
+  }
+
   function applyIconGridDensity() {
     const grids = document.querySelectorAll(".layout-icon-text-grid");
     grids.forEach((grid) => {
@@ -47,13 +124,14 @@
 
     const targets = [
       { selector: ".layout-text-only", minScale: 0.72 },
-      { selector: ".layout-timeline", minScale: 0.76 },
+      { selector: ".layout-timelinev2", minScale: 0.76 },
       { selector: ".layout-chart-analysis", minScale: 0.64 },
       { selector: ".layout-icon-text-grid", minScale: 0.66 },
       { selector: ".layout-appendix-technical", minScale: 0.62 },
       { selector: ".layout-grid", minScale: 0.68 },
       { selector: ".layout-background-overlay", minScale: 0.7 },
-      { selector: ".layout-bar-insight", minScale: 0.68 }
+      { selector: ".layout-bar-insight", minScale: 0.68 },
+      { selector: ".layout-chart-pie", minScale: 0.68 }
     ];
 
     targets.forEach(({ selector, minScale }) => {
@@ -97,6 +175,7 @@
   }
 
   function runLayoutFit() {
+    applyIconEmojiFallback();
     applyIconGridDensity();
     fitLayoutHeight();
     requestAnimationFrame(fitLayoutHeight);
