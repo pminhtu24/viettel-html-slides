@@ -3,6 +3,7 @@
   "eyebrow": "Presentation Content",
   "title": "Meeting Agenda",
   "subtitle": "Executive Committee Meeting · 2026-05-21",
+  "active_index": 1,
   "items": [
     {
       "number": "1",
@@ -17,8 +18,7 @@
     {
       "number": "3",
       "title": "5G Strategy - 2027 Roadmap",
-      "time": "09:40 - 10:20",
-      "active": true
+      "time": "09:40 - 10:20"
     }
   ],
   "slide_mode": "16x9"

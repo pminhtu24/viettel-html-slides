@@ -39,6 +39,27 @@ The generator uses only the Python standard library.
 
 ## Usage
 
+### Source Visual Ingest (Recommended)
+
+When users provide report files with visuals (`.pptx/.docx/.pdf/image`), extract and audit images first:
+
+```bash
+python3 scripts/ingest_assets.py --deck-dir preview/<deck-name> <source-file-1> [<source-file-2> ...]
+```
+
+Optional for PDF page previews:
+
+```bash
+python3 scripts/ingest_assets.py --deck-dir preview/<deck-name> --render-pdf-pages report.pdf
+```
+
+This produces:
+
+- `preview/<deck-name>/assets/source_extracted/*`
+- `preview/<deck-name>/assets/source-image-manifest.json`
+
+Use `recommended_image_paths` from the manifest before fallback backgrounds.
+
 ### Use With Claude Code Or OpenClaw
 
 When this folder is installed as a skill, users can ask the agent in plain language. The agent will read the content, create the needed JSON internally, run the generator, and return HTML slide files.
@@ -226,6 +247,7 @@ Check Python syntax:
 
 ```bash
 python3 -m py_compile viettel-html-slide/scripts/generator.py
+python3 -m py_compile scripts/ingest_assets.py
 ```
 
 Generate a smoke-test slide:

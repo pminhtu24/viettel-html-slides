@@ -1131,7 +1131,7 @@ body {
 
 .layout-image-text-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr;
     gap: 3rem;
     align-items: center;
     width: min(100%, 1280px);
@@ -1969,6 +1969,104 @@ body {
 .slide-16x9 .slide-content:has(.layout-image-text-split) .slide-main > .layout-image-text-split,
 .mode-16x9 .slide-content:has(.layout-image-text-split) .slide-main > .layout-image-text-split {
   transform: translateY(-0.55rem);
+}
+
+/* image-top-text-bottom + centered-image: shrink header/title and image size (-30%) */
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-title,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-title,
+.slide-16x9 .slide-content:has(.layout-centered-image) .slide-title,
+.mode-16x9 .slide-content:has(.layout-centered-image) .slide-title {
+  font-size: clamp(2.835rem, 4.83vw, 3.78rem);
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-subtitle,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-subtitle,
+.slide-16x9 .slide-content:has(.layout-centered-image) .slide-subtitle,
+.mode-16x9 .slide-content:has(.layout-centered-image) .slide-subtitle {
+  font-size: clamp(1.47rem, 2.625vw, 2.1rem);
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-header,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) .slide-header,
+.slide-16x9 .slide-content:has(.layout-centered-image) .slide-header,
+.mode-16x9 .slide-content:has(.layout-centered-image) .slide-header {
+  margin-bottom: 0.95rem;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) .layout-image-top-text-bottom img,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) .layout-image-top-text-bottom img,
+.slide-16x9 .slide-content:has(.layout-centered-image) .layout-centered-image img,
+.mode-16x9 .slide-content:has(.layout-centered-image) .layout-centered-image img {
+  max-width: 70%;
+  max-height: 56vh;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-readable-single,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-readable-single,
+.slide-16x9 .slide-content:has(.layout-centered-image) img.image-readable-single,
+.mode-16x9 .slide-content:has(.layout-centered-image) img.image-readable-single {
+  max-width: calc((100vw - 140px) * 0.7);
+  max-height: 51.8vh;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-ultra-wide,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-ultra-wide,
+.slide-16x9 .slide-content:has(.layout-centered-image) img.image-ultra-wide,
+.mode-16x9 .slide-content:has(.layout-centered-image) img.image-ultra-wide {
+  width: calc((100vw - 140px) * 0.7);
+  max-height: 49vh;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-tall,
+.mode-16x9 .slide-content:has(.layout-image-top-text-bottom) img.image-tall,
+.slide-16x9 .slide-content:has(.layout-centered-image) img.image-tall,
+.mode-16x9 .slide-content:has(.layout-centered-image) img.image-tall {
+  max-width: 50.4vw;
+  max-height: 53.2vh;
+}
+
+/* image-text-split: enlarge image area (+50%) and reduce right text block (-50%) */
+.slide-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split,
+.mode-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split {
+  grid-template-columns: 1.5fr 1fr;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .overview-title,
+.mode-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .overview-title {
+  font-size: 1.995rem;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .overview-copy,
+.mode-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .overview-copy {
+  font-size: 1.12rem;
+  line-height: 1.5;
+}
+
+.slide-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .feature-copy,
+.mode-16x9 .slide-content:has(.layout-image-text-split) .layout-image-text-split .text-side .feature-copy {
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+/* appendix-technical: shrink header/title by 40% and pull content upward */
+.slide-16x9 .slide-content:has(.layout-appendix-technical) .slide-title,
+.mode-16x9 .slide-content:has(.layout-appendix-technical) .slide-title {
+  font-size: clamp(2.43rem, 4.14vw, 3.24rem);
+}
+
+.slide-16x9 .slide-content:has(.layout-appendix-technical) .slide-subtitle,
+.mode-16x9 .slide-content:has(.layout-appendix-technical) .slide-subtitle {
+  font-size: clamp(1.26rem, 2.25vw, 1.8rem);
+}
+
+.slide-16x9 .slide-content:has(.layout-appendix-technical) .slide-header,
+.mode-16x9 .slide-content:has(.layout-appendix-technical) .slide-header {
+  margin-bottom: 0.85rem;
+}
+
+.slide-16x9 .slide-content:has(.layout-appendix-technical) .slide-main > .layout-appendix-technical,
+.mode-16x9 .slide-content:has(.layout-appendix-technical) .slide-main > .layout-appendix-technical {
+  transform: translateY(-0.75rem);
 }
 
 .slide-16x9 .slide-content:has(.layout-section-divider) .sd-title,

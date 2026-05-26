@@ -155,6 +155,51 @@ def enrich_image_metadata(data, data_path, output_path):
     else:
         data["readability_warning"] = ""
 
+
+def normalize_agenda_active_item(data):
+    if data.get("layout") != "agenda":
+        return
+
+    items = data.get("items", [])
+    if not isinstance(items, list) or not items:
+        return
+
+    active_row_idx = None
+
+    active_index_raw = data.get("active_index")
+    active_index = None
+    if isinstance(active_index_raw, int):
+        active_index = active_index_raw
+    elif isinstance(active_index_raw, str) and active_index_raw.strip().isdigit():
+        active_index = int(active_index_raw.strip())
+
+    if isinstance(active_index, int) and 1 <= active_index <= len(items):
+        active_row_idx = active_index - 1
+
+    if active_row_idx is None:
+        active_number_raw = data.get("active_number", "")
+        active_number = str(active_number_raw).strip() if active_number_raw is not None else ""
+        if active_number:
+            for idx, item in enumerate(items):
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get("number", "")).strip() == active_number:
+                    active_row_idx = idx
+                    break
+
+    if active_row_idx is None:
+        for idx, item in enumerate(items):
+            if isinstance(item, dict) and bool(item.get("active", False)):
+                active_row_idx = idx
+                break
+
+    if active_row_idx is None:
+        active_row_idx = 0
+
+    for idx, item in enumerate(items):
+        if isinstance(item, dict):
+            item["active"] = idx == active_row_idx
+
 def process_template(template, data):
     # Handle nested {{#each}} and {{#if}} using a stack-based approach
     def coerce_scalar(value):
@@ -263,6 +308,7 @@ def generate_slide(data_path, master_template_path, output_path):
         with open(data_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         enrich_image_metadata(data, data_path, output_path)
+        normalize_agenda_active_item(data)
         body_classes = data.get("body_class", "")
         normalized_mode = str(data.get("slide_mode", "")).strip().lower()
         is_16x9 = normalized_mode in {"16x9", "16:9", "16-9"}
@@ -379,12 +425,41 @@ def render_agenda(data: dict) -> str:
     if subtitle:
         subtitle_html = f'<p class="ag-meta">{subtitle}</p>'
  
+    # Resolve a single active agenda row with the following priority:
+    # 1) active_index (1-based)
+    # 2) active_number (matches item.number)
+    # 3) first item that has active=true
+    # 4) fallback to the first row
+    active_row_idx = None
+
+    active_index = data.get("active_index")
+    if isinstance(active_index, int) and 1 <= active_index <= len(items):
+        active_row_idx = active_index - 1
+
+    if active_row_idx is None:
+        active_number_raw = data.get("active_number", "")
+        active_number = str(active_number_raw).strip() if active_number_raw is not None else ""
+        if active_number:
+            for idx, item in enumerate(items):
+                if str(item.get("number", "")).strip() == active_number:
+                    active_row_idx = idx
+                    break
+
+    if active_row_idx is None:
+        for idx, item in enumerate(items):
+            if bool(item.get("active", False)):
+                active_row_idx = idx
+                break
+
+    if active_row_idx is None and items:
+        active_row_idx = 0
+
     items_html_parts = []
-    for item in items:
+    for idx, item in enumerate(items):
         num = item.get("number", "")
         item_title = item.get("title", "")
         time_str = item.get("time", "")
-        active = item.get("active", False)
+        active = idx == active_row_idx
         active_class = " ag-item--active" if active else ""
  
         time_html = f'<div class="ag-item-time">{time_str}</div>' if time_str else ""

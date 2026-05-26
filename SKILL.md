@@ -47,7 +47,6 @@ description: Generate Viettel-branded HTML slides from JSON with 20 modular layo
 
 Use this guide to choose layout before writing JSON.
 Primary rule: **message fit first, variety second**.
-A layout is correct when it makes the core message easier to understand in under 5 seconds.
 
 | Layout                  | Use when                                            | Usually avoid when                                         |
 | ----------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
@@ -77,6 +76,7 @@ A layout is correct when it makes the core message easier to understand in under
 - 6-12 slides: aim for 4-6 layout types.
 - 13+ slides: aim for 6+ layout types.
 - Do not overuse `icon-text-grid`, `data-table` (normally max 2 per 10 slides).
+- `section-divider` has no hard cap; use it whenever a real section boundary improves structure (often more than 2 in long decks).
 - Repetition is allowed if it improves comprehension.
 
 **Repetition rule (soft, with exceptions):**
@@ -102,6 +102,20 @@ A layout is correct when it makes the core message easier to understand in under
 3. If usable images = `1-2`, allow only single-image layouts and avoid `two-horizontal-images` and image-heavy `grid`.
 4. If usable images `>=3`, all layouts are allowed.
 5. If assigned image reduces readability or overlaps content, switch to a lower-image layout instead of forcing that image.
+
+**Image shape to layout mapping (required):**
+
+1. Prefer `image-text-split` as the default layout when a slide needs both image + explanation text.
+2. Use `image-top-text-bottom` only when the image is not extreme in shape and has enough vertical room.
+3. If image is wide (`aspect_ratio >= 1.8`), ultra-wide (`>= 2.5`), or tall (`<= 0.75`), avoid `image-top-text-bottom`.
+4. For wide/ultra-wide/tall images, preserve image readability first:
+   - prioritize single-image layouts: `centered-image` or `image-top-text-bottom` with text block removed.
+   - do not force side/bottom text blocks that shrink the image too much.
+5. If image is small/standard ratio (`0.75 < aspect_ratio < 1.8`), `image-top-text-bottom` is allowed.
+6. If layout choice is ambiguous, choose readability-safe fallback in this order:
+   - `centered-image` (image evidence first)
+   - `image-text-split` (balanced narrative + image)
+   - `image-top-text-bottom` (only for non-extreme images)
 
 **Pre-generation checklist:**
 
@@ -187,6 +201,11 @@ Before generating HTML, validate that all `icon_src` paths in JSON exist.
 
 - Extract and reuse source visuals into output `assets/` when available.
 - Keep filenames descriptive and stable.
+- If user provides source files with visuals (`pptx/docx/pdf/image`), run ingest first:
+  - `python3 scripts/ingest_assets.py --deck-dir preview/<deck-name> <source-file-1> [<source-file-2> ...]`
+  - Optional PDF page render: add `--render-pdf-pages`
+  - Use generated manifest: `preview/<deck-name>/assets/source-image-manifest.json`
+- Prioritize images from `./assets/source_extracted/*` (recommended images in manifest) before fallback pool.
 - If source visuals are missing, use fallback images from `./assets/background_picture/*`.
 - Random fallback is allowed for `image_src`, `image_1_src`, `image_2_src`, `background_image_src`.
 - Use random fallback mainly for contextual/decorative visuals, not for chart-evidence that requires readable labels.
@@ -195,6 +214,10 @@ Before generating HTML, validate that all `icon_src` paths in JSON exist.
   - wide chart: aspect ratio `>= 1.8` -> prefer single-image slide.
   - ultra-wide chart: aspect ratio `>= 2.5` -> largest single-image treatment.
   - tall chart: aspect ratio `<= 0.75` -> single-image slide or vertical split.
+- Layout enforcement from image shape:
+  - default image narrative layout: `image-text-split`.
+  - `image-top-text-bottom` is only for standard images (not wide/ultra-wide/tall).
+  - if image is wide/ultra-wide/tall, keep image dominant and remove/deprioritize extra text block.
 - If chart labels become unreadable, split into multiple slides.
 
 ## Deck and Navigation Rules
@@ -215,13 +238,17 @@ Use `./preview/bao-cao-attt-from-textonly-skill/` as the canonical reference dec
 ## Standard Workflow
 
 1. Read user request and available source files.
-2. Audit image inventory (`0`, `1-2`, `>=3` usable images).
-3. Select layout per slide by semantic fit and image-availability rules.
-4. Build JSON data per selected layout.
-5. Generate slide HTML using:
+2. If source files contain visuals, run ingest:
+   - `python3 scripts/ingest_assets.py --deck-dir preview/<deck-name> <source-files...>`
+3. Audit image inventory (`0`, `1-2`, `>=3` usable images) using:
+   - `preview/<deck-name>/assets/source-image-manifest.json`
+   - fallback pool `./assets/background_picture/*`
+4. Select layout per slide by semantic fit and image-availability rules.
+5. Build JSON data per selected layout.
+6. Generate slide HTML using:
    - `python3 scripts/generator.py <input.json> template.html <output.html>`
-6. Ensure output has working `assets/` paths.
-7. For preview decks (`preview/<deck-name>/index.html`), wire iframe icon runtime fallback.
+7. Ensure output has working `assets/` paths.
+8. For preview decks (`preview/<deck-name>/index.html`), wire iframe icon runtime fallback.
 
 ## Templates and Assets
 

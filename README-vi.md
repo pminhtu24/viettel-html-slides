@@ -39,6 +39,27 @@ Generator chỉ dùng thư viện chuẩn của Python.
 
 ## Cách Dùng
 
+### Trích Xuất Ảnh Từ File Nguồn (Khuyến Nghị)
+
+Khi người dùng cung cấp báo cáo có hình (`.pptx/.docx/.pdf/ảnh`), nên chạy ingest trước:
+
+```bash
+python3 scripts/ingest_assets.py --deck-dir preview/<ten-deck> <file-nguon-1> [<file-nguon-2> ...]
+```
+
+Tùy chọn render từng trang PDF:
+
+```bash
+python3 scripts/ingest_assets.py --deck-dir preview/<ten-deck> --render-pdf-pages report.pdf
+```
+
+Lệnh này tạo:
+
+- `preview/<ten-deck>/assets/source_extracted/*`
+- `preview/<ten-deck>/assets/source-image-manifest.json`
+
+Ưu tiên dùng `recommended_image_paths` trong manifest trước khi fallback sang ảnh nền mặc định.
+
 ### Dùng Với Claude Code Hoặc OpenClaw
 
 Khi thư mục này được cài như một skill, người dùng chỉ cần hỏi bằng ngôn ngữ tự nhiên. Agent sẽ đọc nội dung, tự tạo JSON cần thiết, chạy generator, rồi trả về file HTML slide.
@@ -226,6 +247,7 @@ Kiểm tra syntax Python:
 
 ```bash
 python3 -m py_compile viettel-html-slide/scripts/generator.py
+python3 -m py_compile scripts/ingest_assets.py
 ```
 
 Tạo slide smoke test:
