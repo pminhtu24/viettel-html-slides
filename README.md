@@ -11,7 +11,7 @@ This skill contains a small Python generator, reusable HTML layout templates, Vi
 - Copies the `assets/` folder next to generated output.
 - Supports free-scrolling pages and locked `16x9` slide mode.
 - Adds image readability metadata for wide, ultra-wide, and tall local images.
-- Supports 20 reusable layouts.
+- Supports 21 reusable layouts.
 
 ## Structure
 
@@ -29,6 +29,21 @@ viettel-html-slide/
     ├── viettel-logo.png
     └── fonts/
 ```
+
+## Documentation Map
+
+Read in this order for fastest onboarding:
+
+1. `SKILL.md` — entrypoint, quick rules, layout catalog, workflow.
+2. `docs/guide/layout-selection.md` — layout strategy, selection heuristics, quality rules.
+3. `docs/guide/media-and-icons.md` — icon policy, fallback mapping, image handling/readability.
+4. `docs/guide/deck-policy.md` — deck navigation rules and canonical reference deck policy.
+5. `docs/layout-json/README.md` — JSON example index + naming convention.
+
+Vietnamese references:
+
+- `docs/vi/layout-selection.vi.md`
+- `docs/vi/media-and-icons.vi.md`
 
 ## Requirements
 
@@ -151,6 +166,7 @@ Supported layouts:
 - `background-overlay`
 - `appendix-technical`
 - `kpi-grid`
+- `org-hierarchy`
 
 ## Layout Examples
 
